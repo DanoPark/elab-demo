@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELAB v7 — AI SNS 마케팅 플랫폼</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080F1C;--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.09);--purple:#7C3AED;--indigo:#6366F1;--accent:#C4B5FD;--text:#FFFFFF;--muted:rgba(255,255,255,0.55);--dim:rgba(255,255,255,0.28);--green:#4ADE80}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;line-height:1.6}
+.app{max-width:760px;margin:0 auto;padding:36px 20px 80px}
+.step{display:none}.step.active{display:block;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:36px}
+.brand-mark{width:30px;height:30px;background:linear-gradient(135deg,var(--purple),var(--indigo));border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px}
+.brand-name{font-size:11px;font-weight:700;letter-spacing:4.5px;color:var(--accent);text-transform:uppercase}
+.headline{font-size:30px;font-weight:900;line-height:1.2;letter-spacing:-.8px;margin-bottom:10px}
+.grad{background:linear-gradient(135deg,#C4B5FD,#818CF8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subline{font-size:14px;color:var(--muted);margin-bottom:36px}
+.step-dots{display:flex;gap:5px;margin-bottom:28px;align-items:center}
+.sd{width:6px;height:6px;border-radius:50%;background:var(--border)}
+.sd.active{background:var(--purple);width:18px;border-radius:3px}
+.sd.done{background:rgba(124,58,237,.45)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px}
+.api-info{background:rgba(124,58,237,.09);border:1px solid rgba(124,58,237,.18);border-radius:9px;padding:12px 15px;font-size:12px;color:var(--accent);margin-bottom:18px;line-height:1.75}
+.input-field{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);border-radius:11px;padding:13px 16px;color:var(--text);font-size:14px;font-family:'Noto Sans KR',sans-serif;outline:none;transition:border-color .2s;margin-bottom:12px}
+.input-field:focus{border-color:var(--purple)}
+.input-field::placeholder{color:var(--dim)}
+.btn-p{display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,var(--purple),var(--indigo));color:#fff;border:none;padding:14px 28px;border-radius:999px;font-size:14px;font-weight:500;cursor:pointer;font-family:'Noto Sans KR',sans-serif;width:100%;transition:opacity .2s;margin-bottom:10px}
+.btn-p:hover{opacity:.88}
+.btn-s{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--muted);padding:10px 20px;border-radius:999px;font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .2s}
+.btn-s:hover{border-color:rgba(255,255,255,.25);color:var(--text)}
+.industry-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:8px}
+.ib{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 10px;text-align:center;cursor:pointer;transition:all .2s;color:var(--text);font-family:'Noto Sans KR',sans-serif}
+.ib:hover{border-color:var(--purple);background:rgba(124,58,237,.1)}
+.ib-icon{font-size:26px;margin-bottom:7px}.ib-label{font-size:12px;font-weight:500}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:24px}
+.chip{padding:5px 13px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:999px;font-size:12px;color:var(--muted);cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .2s}
+.chip:hover{border-color:var(--purple);color:var(--accent)}
+.loading{text-align:center;padding:80px 20px}
+.dots{display:inline-flex;gap:7px;margin-bottom:22px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--purple);animation:pulse 1.4s infinite}
+.dot:nth-child(2){animation-delay:.22s}.dot:nth-child(3){animation-delay:.44s}
+@keyframes pulse{0%,80%,100%{opacity:.25;transform:scale(.75)}40%{opacity:1;transform:scale(1)}}
+.lt{font-size:15px;color:var(--muted)}.ld{font-size:12px;color:var(--dim);margin-top:10px}
+.trend-card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:18px;margin-bottom:9px}
+.tc-title{font-size:15px;font-weight:500;margin-bottom:10px}
+.score-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.sbar-bg{flex:1;height:4px;background:rgba(255,255,255,.09);border-radius:2px}
+.sbar-fill{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--purple),var(--indigo))}
+.score-n{font-size:13px;font-weight:700;color:var(--green);min-width:26px;text-align:right}
+.tc-reason{font-size:12px;color:var(--muted)}.tc-hook{font-size:12px;color:var(--accent);margin-top:6px;font-style:italic}
+.sel-btn{display:inline-flex;align-items:center;gap:5px;background:rgba(124,58,237,.14);border:1px solid rgba(124,58,237,.28);color:var(--accent);padding:7px 14px;border-radius:999px;font-size:12px;font-weight:500;cursor:pointer;margin-top:12px;font-family:'Noto Sans KR',sans-serif}
+.tab-bar{display:flex;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:3px;gap:3px;margin-bottom:20px}
+.tab-btn{flex:1;padding:9px 6px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .2s}
+.tab-btn.active{background:rgba(124,58,237,.22);color:var(--accent)}
+.result-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:16px;font-size:14px;color:rgba(255,255,255,.8);line-height:1.85;white-space:pre-wrap;margin-bottom:10px}
+.actions{display:flex;gap:7px;justify-content:flex-end;margin-bottom:20px}
+.copy-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--muted);padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .2s}
+.copy-btn:hover{border-color:var(--purple);color:var(--accent)}.copy-btn.ok{border-color:var(--green);color:var(--green)}
+.htags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}
+.htag{background:rgba(124,58,237,.13);border:1px solid rgba(124,58,237,.22);color:var(--accent);padding:4px 10px;border-radius:6px;font-size:12px}
+.blog-section{margin-bottom:18px}
+.blog-label{font-size:10px;font-weight:500;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.blog-badge{background:rgba(124,58,237,.18);color:var(--accent);padding:2px 8px;border-radius:4px;font-size:10px}
+.blog-title-el{font-size:20px;font-weight:700;margin-bottom:20px;line-height:1.35;color:var(--text)}
+.blog-hook-el{font-size:15px;font-weight:500;color:#C4B5FD;font-style:italic;margin-bottom:18px;line-height:1.7}
+.blog-text{font-size:14px;color:rgba(255,255,255,.78);line-height:1.95;white-space:pre-wrap}
+.blog-loading{background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.15);border-radius:10px;padding:16px;text-align:center;font-size:13px;color:var(--accent)}
+.slide-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.sn-btn{padding:5px 13px;border-radius:7px;border:1px solid rgba(255,255,255,.09);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .2s}
+.sn-btn.active{background:rgba(124,58,237,.18);border-color:var(--purple);color:var(--accent)}
+.slide-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:10px}
+.slide-img{width:100%;aspect-ratio:1/1;background:#0D1020;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.slide-img img{width:100%;height:100%;object-fit:cover}
+.slide-img-ph{text-align:center;padding:20px;font-size:12px;color:var(--dim);line-height:1.8}
+.img-prog{font-size:11px;color:var(--accent);margin-top:8px;font-weight:500}
+.slide-content{padding:16px}.slide-headline{font-size:17px;font-weight:700;margin-bottom:7px}
+.slide-body{font-size:13px;color:var(--muted);line-height:1.65}
+.cta-box{margin-top:32px;background:linear-gradient(135deg,rgba(124,58,237,.13),rgba(99,102,241,.13));border:1px solid rgba(124,58,237,.25);border-radius:16px;padding:24px;text-align:center}
+.cta-box .cta-title{font-size:17px;font-weight:700;margin-bottom:7px}
+.cta-box .cta-sub{font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.7}
+.cta-box .cta-c{font-size:14px;font-weight:500;color:var(--accent);margin-bottom:3px}
+@media(max-width:500px){.industry-grid{grid-template-columns:repeat(2,1fr)}.headline{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="step active" id="s0">
+  <div class="brand"><div class="brand-mark">E</div><span class="brand-name">ELAB COMPANY</span></div>
+  <div class="headline">이제 AI가 <span class="grad">'당신의'</span><br>SNS홍보를 대신합니다.</div>
+  <div class="subline">AI 멀티에이전트 자율 마케팅 솔루션 · Pre-Alpha Demo</div>
+  <div class="card">
+    <div class="api-info">✦ 이랩컴퍼니 AI 마케팅 플랫폼 체험판입니다<br>✦ API 키를 입력하고 시작하세요</div>
+    <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:8px">Claude API Key</label>
+    <input type="password" class="input-field" id="api-key" placeholder="sk-ant-api03-...">
+    <button class="btn-p" id="btn-start">시작하기 →</button>
+  </div>
+</div>
+
+<div class="step" id="s1">
+  <div class="brand"><div class="brand-mark">E</div><span class="brand-name">ELAB COMPANY</span></div>
+  <div class="step-dots"><div class="sd done"></div><div class="sd active"></div><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>
+  <div class="headline">업종을 선택하세요</div>
+  <div class="subline">선택 즉시 다음 단계로 이동합니다.</div>
+  <div class="industry-grid">
+    <button class="ib" data-ind="축산·농업"><div class="ib-icon">🐄</div><div class="ib-label">축산·농업</div></button>
+    <button class="ib" data-ind="쇼핑몰·이커머스"><div class="ib-icon">🛍️</div><div class="ib-label">쇼핑몰·이커머스</div></button>
+    <button class="ib" data-ind="카페·식음료"><div class="ib-icon">☕</div><div class="ib-label">카페·식음료</div></button>
+    <button class="ib" data-ind="소매·오프라인"><div class="ib-icon">🏪</div><div class="ib-label">소매·오프라인</div></button>
+    <button class="ib" data-ind="제조·가공"><div class="ib-icon">🏭</div><div class="ib-label">제조·가공</div></button>
+    <button class="ib" id="custom-btn"><div class="ib-icon">✏️</div><div class="ib-label">직접 입력</div></button>
+  </div>
+  <div id="custom-wrap" style="display:none;margin-top:8px">
+    <input type="text" class="input-field" id="custom-inp" placeholder="업종명을 입력하세요">
+    <button class="btn-p" id="btn-confirm-custom">다음 →</button>
+  </div>
+</div>
+
+<div class="step" id="s2">
+  <div class="brand"><div class="brand-mark">E</div><span class="brand-name">ELAB COMPANY</span></div>
+  <div class="step-dots"><div class="sd done"></div><div class="sd done"></div><div class="sd active"></div><div class="sd"></div><div class="sd"></div></div>
+  <div class="headline">무엇을 홍보하시나요?</div>
+  <div class="subline" id="s2-sub"></div>
+  <input type="text" class="input-field" id="kw-inp" placeholder="예: 딸기, 신상품 출시, 봄 프로모션">
+  <div class="chips" id="chips"></div>
+  <button class="btn-p" id="btn-analyze">AI 트렌드 분석 시작 →</button>
+  <button class="btn-s" id="btn-back1">← 업종 다시 선택</button>
+</div>
+
+<div class="step" id="s3">
+  <div class="loading">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="lt" id="lt1">실시간 트렌드를 검색하고 있습니다...</div>
+    <div class="ld">웹 검색으로 바이럴 소재 탐색 중</div>
+  </div>
+</div>
+
+<div class="step" id="s4">
+  <div class="brand"><div class="brand-mark">E</div><span class="brand-name">ELAB COMPANY</span></div>
+  <div class="step-dots"><div class="sd done"></div><div class="sd done"></div><div class="sd done"></div><div class="sd active"></div><div class="sd"></div></div>
+  <div class="headline">트렌드 분석 완료</div>
+  <div class="subline" id="s4-sub"></div>
+  <div id="trend-list"></div>
+</div>
+
+<div class="step" id="s5">
+  <div class="loading">
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="lt" id="lt2">콘텐츠를 생성하고 있습니다...</div>
+    <div class="ld" id="ld2">인스타그램 · 블로그 · 카드뉴스 초안 작성 중</div>
+  </div>
+</div>
+
+<div class="step" id="s6">
+  <div class="brand"><div class="brand-mark">E</div><span class="brand-name">ELAB COMPANY</span></div>
+  <div class="step-dots"><div class="sd done"></div><div class="sd done"></div><div class="sd done"></div><div class="sd done"></div><div class="sd active"></div></div>
+  <div class="headline">콘텐츠 초안 완성</div>
+  <div class="subline" id="s6-sub"></div>
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="ig">📸 인스타그램</button>
+    <button class="tab-btn" data-tab="bl">📝 블로그</button>
+    <button class="tab-btn" data-tab="cn">🃏 카드뉴스</button>
+  </div>
+
+  <div id="t-ig">
+    <div class="result-box" id="ig-cap"></div>
+    <div class="htags" id="ig-tags"></div>
+    <div class="actions">
+      <button class="copy-btn" id="cp-cap">캡션 복사</button>
+      <button class="copy-btn" id="cp-tags">해시태그 복사</button>
+    </div>
+  </div>
+
+  <div id="t-bl" style="display:none">
+    <div class="blog-title-el" id="bl-title"></div>
+    <div class="blog-section">
+      <div class="blog-label"><span class="blog-badge">HOOK</span>후킹 첫 문장</div>
+      <div class="blog-hook-el" id="bl-hook"></div>
+    </div>
+    <div class="blog-section">
+      <div class="blog-label"><span class="blog-badge">PROBLEM</span>문제 공감</div>
+      <div class="blog-text" id="bl-problem"></div>
+    </div>
+    <div class="blog-section" style="margin-top:16px">
+      <div class="blog-label"><span class="blog-badge">SOLUTION</span>해결책</div>
+      <div class="blog-text" id="bl-solution"></div>
+    </div>
+    <div class="blog-section" style="margin-top:16px">
+      <div class="blog-label"><span class="blog-badge">DETAIL</span>핵심 정보</div>
+      <div class="blog-text" id="bl-detail"></div>
+    </div>
+    <div class="blog-section" style="margin-top:16px">
+      <div class="blog-label"><span class="blog-badge">STORY</span>스토리</div>
+      <div class="blog-text" id="bl-story"></div>
+    </div>
+    <div class="blog-section" style="margin-top:16px">
+      <div class="blog-label"><span class="blog-badge">CTA</span>행동 유도</div>
+      <div class="blog-text" id="bl-cta"></div>
+    </div>
+    <div id="bl-loading" class="blog-loading" style="display:none">
+      <div class="dots" style="justify-content:center;margin-bottom:10px"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      블로그 1500자 생성 중...
+    </div>
+    <div class="actions" style="margin-top:18px">
+      <button class="copy-btn" id="cp-blog">전체 복사</button>
+    </div>
+  </div>
+
+  <div id="t-cn" style="display:none">
+    <div class="slide-nav" id="sld-nav"></div>
+    <div id="sld-view"></div>
+    <div class="actions"><button class="copy-btn" id="cp-slide">슬라이드 텍스트 복사</button></div>
+  </div>
+
+  <div class="cta-box">
+    <div class="cta-title">전체 자동화 파이프라인을 도입하세요</div>
+    <div class="cta-sub">트렌드 수집부터 콘텐츠 발행까지 완전 자동화<br>이랩컴퍼니가 설계하고 운영합니다.</div>
+    <div class="cta-c">010-9969-0668</div>
+    <div style="height:20px"></div>
+    <button class="btn-s" id="btn-reset">← 처음부터 다시</button>
+  </div>
+</div>
+
+</div>
+<script>
+(function(){
+const KW_MAP={'축산·농업':['한우','딸기','제철 채소','산지 직송','유기농 인증'],'쇼핑몰·이커머스':['신상품 출시','봄 신상','한정 특가','무료배송','리뷰 이벤트'],'카페·식음료':['신메뉴','봄 시즌 음료','테이크아웃','디저트 신메뉴','시즌 한정'],'소매·오프라인':['봄맞이 세일','매장 신상','할인 행사','신규 오픈','이벤트 홍보'],'제조·가공':['신제품 출시','품질 인증','납품 실적','제조 과정','공장 직납']};
+const LD1=['실시간 트렌드를 검색하고 있습니다...','바이럴 소재를 탐색하고 있습니다...','관련성을 분석하고 있습니다...','최적 소재를 선별하고 있습니다...'];
+const LD2=['콘텐츠를 생성하고 있습니다...','인스타그램 캡션 작성 중...','카드뉴스 슬라이드 완성 중...','블로그 병렬 생성 중...'];
+let apiKey='',industry='',keyword='',trend=null,content=null,curSlide=0;
+
+function go(n){document.querySelectorAll('.step').forEach(function(s){s.classList.remove('active');});document.getElementById('s'+n).classList.add('active');window.scrollTo(0,0);}
+function pjson(t){var c=t.replace(/```json\n?|\n?```|```/g,'').trim();var m=c.match(/\{[\s\S]*\}/);return JSON.parse(m?m[0]:c);}
+function cpText(text,btn,label){navigator.clipboard.writeText(text).then(function(){btn.textContent='✓ 복사됨';btn.classList.add('ok');setTimeout(function(){btn.textContent=label;btn.classList.remove('ok');},2000);});}
+function claudeCall(system,userMsg,maxTok,useSearch){
+  var body={model:'claude-sonnet-4-20250514',max_tokens:maxTok,system:system,messages:[{role:'user',content:userMsg}]};
+  if(useSearch) body.tools=[{type:'web_search_20250305',name:'web_search'}];
+  return fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(body)});
+}
+
+/* ── 이미지 생성 (Pollinations.ai — API 키·결제 불필요) ── */
+function generateImage(prompt){
+  var cleaned=prompt
+    .replace(/\[Scene\]|\[Subject\]|\[Camera\]|\[Lighting\]|\[Realism\]|\[Technical\]/g,' ')
+    .replace(/\s+/g,' ').trim().substring(0,200);
+  var seed=Math.floor(Math.random()*99999);
+  var encoded=encodeURIComponent('photorealistic commercial product photo, '+cleaned+', professional lighting, no people, no text, no watermark');
+  return 'https://image.pollinations.ai/prompt/'+encoded+'?width=512&height=512&nologo=true&seed='+seed;
+}
+
+/* ── 3개 이미지 병렬 동시 생성 ── */
+async function genAllImages(slides){
+  var items=slides.slice(0,3).map(function(s,i){return {idx:i,url:generateImage(s.image_prompt)};});
+  /* generateImage는 즉시 URL 반환 (async 래핑 유지) */
+  var results=await Promise.all(items.map(function(item){return Promise.resolve(item);}));
+  results.forEach(function(r){
+    var el=document.getElementById('si-'+r.idx);
+    if(!el){console.error('genAllImages: #si-'+r.idx+' DOM 없음');return;}
+    var url=r.url;
+    if(url){
+      el.innerHTML='<img src="'+url+'" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML=\'<div style=width:100%;height:100%;background:#1a1035;display:flex;align-items:center;justify-content:center><div style=color:rgba(196,181,253,.6);font-size:11px;padding:16px;text-align:center>이미지 생성 중<br>잠시 후 새로고침</div></div>\'">';
+    } else {
+      el.innerHTML='<div style="width:100%;height:100%;background:#1a1035;display:flex;align-items:center;justify-content:center;padding:16px;text-align:center"><div style="color:rgba(196,181,253,.6);font-size:11px;line-height:1.7">이미지 준비 중</div></div>';
+    }
+  });
+}
+
+function showSlide(i){
+  curSlide=i;
+  document.querySelectorAll('.sn-btn').forEach(function(b,j){b.classList.toggle('active',j===i);});
+  /* 슬라이드 래퍼를 show/hide만 — DOM 재생성 없음 */
+  document.querySelectorAll('.slide-wrap').forEach(function(w,j){
+    w.style.display=(j===i)?'block':'none';
+  });
+}
+
+function renderBase(){
+  document.getElementById('s6-sub').textContent='"'+trend.title+'" — '+industry;
+  document.getElementById('ig-cap').textContent=content.instagram.caption;
+  document.getElementById('ig-tags').innerHTML=content.instagram.hashtags.map(function(h){return '<span class="htag">'+h+'</span>';}).join('');
+  var slides=content.cardnews.slides.slice(0,3);
+  /* 네비게이션 버튼 */
+  document.getElementById('sld-nav').innerHTML=slides.map(function(_,i){return '<button class="sn-btn '+(i===0?'active':'')+'" data-slide="'+i+'">슬라이드 '+(i+1)+'</button>';}).join('');
+  /* 3개 슬라이드 전체를 DOM에 사전 렌더링 — display 토글로만 전환 */
+  document.getElementById('sld-view').innerHTML=slides.map(function(s,i){
+    return '<div class="slide-wrap" id="sw-'+i+'" style="display:'+(i===0?'block':'none')+'">'
+      +'<div class="slide-card">'
+      +'<div class="slide-img" id="si-'+i+'">'
+      +'<div class="slide-img-ph">'
+      +'<div class="dots" style="justify-content:center;margin-bottom:8px"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>'
+      +'<div class="img-prog">Nano Banana 이미지 생성 중...</div>'
+      +'</div>'
+      +'</div>'
+      +'<div class="slide-content"><div class="slide-headline">'+s.headline+'</div><div class="slide-body">'+s.body+'</div></div>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+  document.querySelectorAll('.sn-btn').forEach(function(b){b.addEventListener('click',function(){showSlide(+this.dataset.slide);});});
+  curSlide=0;
+}
+
+function renderBlog(blog){
+  document.getElementById('bl-title').textContent=blog.title||'';
+  document.getElementById('bl-hook').textContent=blog.hook||'';
+  document.getElementById('bl-problem').textContent=blog.problem||'';
+  document.getElementById('bl-solution').textContent=blog.solution||'';
+  document.getElementById('bl-detail').textContent=blog.detail||'';
+  document.getElementById('bl-story').textContent=blog.story||'';
+  document.getElementById('bl-cta').textContent=blog.cta||'';
+  document.getElementById('bl-loading').style.display='none';
+}
+
+async function doAnalyze(){
+  var kw=document.getElementById('kw-inp').value.trim();
+  if(!kw){alert('키워드를 입력해주세요.');return;}
+  keyword=kw;go(3);
+  var ti=setInterval(function(){var el=document.getElementById('lt1');if(el)el.textContent=LD1[Math.floor(Date.now()/1800)%LD1.length];},1800);
+  try{
+    var r=await claudeCall(
+      '당신은 한국 소상공인 SNS 마케팅 트렌드 분석 전문가입니다. 반드시 순수 JSON만 응답하세요. 마크다운이나 코드블록 없이 JSON 객체만 출력하세요.',
+      '업종: '+industry+'\n홍보 키워드: '+keyword+'\n\n웹 검색으로 지금 이 업종과 키워드에서 SNS에서 가장 바이럴되고 있는 트렌드 소재 5개를 찾아 분석하세요.\n\n반드시 순수 JSON으로만:\n{"trends":[{"title":"제목(15자이내)","score":8.5,"reason":"선정이유(40자이내)","hook":"첫문장(25자이내)"}]}',
+      1500,true
+    );
+    clearInterval(ti);
+    if(!r.ok)throw new Error('API '+r.status+': '+(await r.text()));
+    var d=await r.json();
+    var txt=d.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('');
+    var parsed=pjson(txt);
+    window._tr=parsed.trends;
+    document.getElementById('s4-sub').textContent=industry+' · "'+keyword+'" — 바이럴 가능성 분석';
+    document.getElementById('trend-list').innerHTML=parsed.trends.map(function(t,i){
+      return '<div class="trend-card"><div class="tc-title">'+t.title+'</div><div class="score-row"><div class="sbar-bg"><div class="sbar-fill" style="width:'+Math.min(t.score*10,100)+'%"></div></div><div class="score-n">'+t.score+'</div></div><div class="tc-reason">'+t.reason+'</div><div class="tc-hook">"'+t.hook+'"</div><button class="sel-btn" data-idx="'+i+'">이 소재로 콘텐츠 만들기 →</button></div>';
+    }).join('');
+    document.querySelectorAll('.sel-btn').forEach(function(b){b.addEventListener('click',function(){selectTrend(+this.dataset.idx);});});
+    go(4);
+  }catch(e){clearInterval(ti);alert('오류: '+e.message);go(2);}
+}
+
+async function selectTrend(idx){
+  trend=window._tr[idx];go(5);
+  var ti=setInterval(function(){var el=document.getElementById('lt2');if(el)el.textContent=LD2[Math.floor(Date.now()/1600)%LD2.length];},1600);
+
+  /* ── API 호출 1: 인스타 + 카드뉴스 (이미지 프롬프트 포함) ── */
+  var SYS1='당신은 한국 소상공인 SNS 콘텐츠 전문 카피라이터입니다. 반드시 순수 JSON만 응답하세요. 코드블록 없이 JSON 객체만 출력하세요.\n\nimage_prompt 규칙: 각 슬라이드 image_prompt는 반드시 영어로 6개 레이어 구조로 작성하세요.\n[Scene] 배경/환경 [Subject] 핵심 피사체의 물리적 특성/질감/색상 구체 묘사 [Camera] 프레이밍/렌즈/DOF [Lighting] 광원/방향/확산도 [Realism] no filter, no retouching, no artificial glow, no CGI, no plastic look [Technical] ultra photorealistic, 4K, natural light, high detail, authentic realism\n예시: [Scene] Korean farm near window, morning light. [Subject] Premium hanwoo beef short ribs, deep red muscle, white fat marbling, natural moisture, dark slate board. [Camera] Overhead macro 100mm, elevated. [Lighting] Soft left window daylight, diffused. [Realism] Visible fiber texture, no filter, no CGI. [Technical] ultra photorealistic 4K natural light.';
+
+  var USER1='업종: '+industry+'\n키워드: '+keyword+'\n트렌드: '+trend.title+'\n배경: '+trend.reason+'\n\n순수 JSON (슬라이드 정확히 3개):\n{"instagram":{"caption":"감성 캡션 150자이내 이모지포함","hashtags":["#태그1","#태그2","#태그3","#태그4","#태그5","#태그6","#태그7"]},"cardnews":{"slides":[{"headline":"표지제목8자이내","body":"한두줄","image_prompt":"6레이어영어"},{"headline":"본문제목8자이내","body":"핵심내용","image_prompt":"6레이어영어"},{"headline":"CTA제목8자이내","body":"마무리","image_prompt":"6레이어영어"}]}}';
+
+  /* ── API 호출 2: 블로그 전용 (별도 요청, max_tokens 3000) ── */
+  var SYS2='당신은 한국 소상공인 전문 블로그 작가입니다. 반드시 순수 JSON만 응답하세요. 코드블록 없이 JSON만 출력하세요.\n\n블로그 작성 아키텍처 (반드시 준수):\nhook: 독자가 스크롤을 멈추게 하는 첫 문장. 질문형("혹시 이런 경험 있으신가요?") 반전형("전문가들도 모르는 사실이 있습니다") 공감형("저도 처음엔 몰랐습니다") 중 선택. 25자 이내.\nproblem: 독자의 실제 고통 포인트를 구체적으로 묘사. 반드시 300자 이상. 수치나 상황 예시 포함.\nsolution: 상품/서비스가 문제를 해결하는 방식. 반드시 250자 이상. 논리적 흐름으로 작성.\ndetail: 핵심 특징 3가지 이상 상세 설명. 반드시 400자 이상. 수치/근거/비교 포함.\nstory: 실제 사용 장면 또는 감성 묘사. 반드시 250자 이상. 독자가 자신을 투영할 수 있는 구체적 상황.\ncta: 행동 유도. 반드시 100자 이상. 긴박감 또는 혜택 강조.\n\n반드시 전체 합산 1500자 이상. 각 필드 작성 후 글자수를 직접 세어 부족하면 다시 작성.';
+
+  var USER2='업종: '+industry+'\n키워드: '+keyword+'\n트렌드 소재: '+trend.title+'\n배경: '+trend.reason+'\n\n순수 JSON으로만:\n{"title":"SEO최적화 제목 30자이내","hook":"후킹첫문장25자이내","problem":"문제공감 반드시300자이상","solution":"해결책 반드시250자이상","detail":"핵심정보 반드시400자이상","story":"감성스토리 반드시250자이상","cta":"행동유도 반드시100자이상"}';
+
+  try{
+    /* 인스타+카드뉴스와 블로그를 병렬 동시 요청 */
+    var ld2el=document.getElementById('ld2');
+    if(ld2el) ld2el.textContent='인스타·카드뉴스 + 블로그 1500자 동시 생성 중...';
+
+    var [r1,r2]=await Promise.all([
+      claudeCall(SYS1,USER1,2000,false),
+      claudeCall(SYS2,USER2,3000,false)
+    ]);
+    clearInterval(ti);
+
+    if(!r1.ok) throw new Error('콘텐츠 API 오류: '+r1.status);
+    if(!r2.ok) throw new Error('블로그 API 오류: '+r2.status);
+
+    var d1=await r1.json();
+    var d2=await r2.json();
+
+    var base=pjson(d1.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join(''));
+    var blog=pjson(d2.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join(''));
+
+    content={instagram:base.instagram,cardnews:{slides:(base.cardnews.slides||[]).slice(0,3)},blog:blog};
+
+    /* 화면 표시 */
+    renderBase();
+    go(6);
+
+    /* 블로그 렌더링 */
+    renderBlog(blog);
+
+    /* 이미지 3개 병렬 동시 생성 (백그라운드) */
+    genAllImages(content.cardnews.slides);
+
+  }catch(e){clearInterval(ti);alert('오류: '+e.message);go(4);}
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+
+  document.getElementById('btn-start').addEventListener('click',function(){
+    var k=document.getElementById('api-key').value.trim();
+    if(!k){alert('API 키를 입력해주세요.');return;}
+    apiKey=k;go(1);
+  });
+  document.getElementById('api-key').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('btn-start').click();});
+
+  document.querySelectorAll('.ib[data-ind]').forEach(function(b){
+    b.addEventListener('click',function(){
+      industry=this.dataset.ind;go(2);
+      document.getElementById('s2-sub').textContent='선택 업종: '+industry;
+      var kws=KW_MAP[industry]||['신상품','프로모션','이벤트','세일','신규 오픈'];
+      document.getElementById('chips').innerHTML=kws.map(function(k){return '<span class="chip" data-kw="'+k+'">'+k+'</span>';}).join('');
+      document.querySelectorAll('.chip').forEach(function(c){c.addEventListener('click',function(){document.getElementById('kw-inp').value=this.dataset.kw;});});
+    });
+  });
+
+  document.getElementById('custom-btn').addEventListener('click',function(){document.getElementById('custom-wrap').style.display='block';});
+  document.getElementById('btn-confirm-custom').addEventListener('click',function(){
+    var v=document.getElementById('custom-inp').value.trim();
+    if(!v){alert('업종명을 입력해주세요.');return;}
+    industry=v;go(2);
+    document.getElementById('s2-sub').textContent='선택 업종: '+industry;
+    document.getElementById('chips').innerHTML='';
+  });
+
+  document.getElementById('btn-analyze').addEventListener('click',doAnalyze);
+  document.getElementById('kw-inp').addEventListener('keydown',function(e){if(e.key==='Enter')doAnalyze();});
+  document.getElementById('btn-back1').addEventListener('click',function(){go(1);});
+
+  document.querySelectorAll('.tab-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.tab-btn').forEach(function(x){x.classList.remove('active');});
+      this.classList.add('active');
+      ['t-ig','t-bl','t-cn'].forEach(function(id){document.getElementById(id).style.display='none';});
+      document.getElementById('t-'+this.dataset.tab).style.display='block';
+    });
+  });
+
+  document.getElementById('cp-cap').addEventListener('click',function(){cpText(document.getElementById('ig-cap').textContent,this,'캡션 복사');});
+  document.getElementById('cp-tags').addEventListener('click',function(){if(content)cpText(content.instagram.hashtags.join(' '),this,'해시태그 복사');});
+  document.getElementById('cp-blog').addEventListener('click',function(){
+    if(!content||!content.blog)return;
+    var b=content.blog;
+    var full=[b.title,'',b.hook,'',b.problem,'',b.solution,'',b.detail,'',b.story,'',b.cta].filter(function(x){return x!==undefined;}).join('\n');
+    cpText(full,this,'전체 복사');
+  });
+  document.getElementById('cp-slide').addEventListener('click',function(){
+    if(content&&content.cardnews){var s=content.cardnews.slides[curSlide];cpText('[슬라이드 '+(curSlide+1)+']\n'+s.headline+'\n\n'+s.body,this,'슬라이드 텍스트 복사');}
+  });
+  document.getElementById('btn-reset').addEventListener('click',function(){
+    industry='';keyword='';trend=null;content=null;curSlide=0;
+    document.getElementById('kw-inp').value='';
+    document.getElementById('custom-inp').value='';
+    document.getElementById('custom-wrap').style.display='none';
+    go(1);
+  });
+});
+})();
+</script>
+</body>
+</html>
