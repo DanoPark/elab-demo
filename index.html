@@ -137,7 +137,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
     <div class="ld">웹 검색으로 바이럴 소재 탐색 중</div>
   </div>
 </div>
-   
+
 <div class="step" id="s4">
   <div class="brand"><div class="brand-mark">E</div><span class="brand-name">ELAB COMPANY</span></div>
   <div class="step-dots"><div class="sd done"></div><div class="sd done"></div><div class="sd done"></div><div class="sd active"></div><div class="sd"></div></div>
@@ -260,11 +260,9 @@ async function genAllImages(slides){
     var el=document.getElementById('si-'+r.idx);
     if(!el){console.error('genAllImages: #si-'+r.idx+' DOM 없음');return;}
     var url=r.url;
-    if(url){
-      el.innerHTML='<img src="'+url+'" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML=\'<div style=width:100%;height:100%;background:#1a1035;display:flex;align-items:center;justify-content:center><div style=color:rgba(196,181,253,.6);font-size:11px;padding:16px;text-align:center>이미지 생성 중<br>잠시 후 새로고침</div></div>\'">';
-    } else {
-      el.innerHTML='<div style="width:100%;height:100%;background:#1a1035;display:flex;align-items:center;justify-content:center;padding:16px;text-align:center"><div style="color:rgba(196,181,253,.6);font-size:11px;line-height:1.7">이미지 준비 중</div></div>';
-    }
+    var fb='https://picsum.photos/seed/'+(r.idx*777+Math.floor(Date.now()/1000))+'/512/512';
+    var src=url||fb;
+    el.innerHTML='<img src="'+src+'" style="width:100%;height:100%;object-fit:cover" onerror="this.onerror=null;this.src=\''+fb+'\'">';
   });
 }
 
