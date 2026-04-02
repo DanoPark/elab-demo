@@ -241,28 +241,39 @@ function claudeCall(system,userMsg,maxTok,useSearch){
   return fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(body)});
 }
 
-/* ── 이미지 생성 (Pollinations.ai — API 키·결제 불필요) ── */
-function generateImage(prompt){
-  var cleaned=prompt
-    .replace(/\[Scene\]|\[Subject\]|\[Camera\]|\[Lighting\]|\[Realism\]|\[Technical\]/g,' ')
-    .replace(/\s+/g,' ').trim().substring(0,200);
-  var seed=Math.floor(Math.random()*99999);
-  var encoded=encodeURIComponent('photorealistic commercial product photo, '+cleaned+', professional lighting, no people, no text, no watermark');
-  return 'https://image.pollinations.ai/prompt/'+encoded+'?width=512&height=512&nologo=true&seed='+seed;
+/* ── fal.ai FLUX 이미지 생성 ── */
+const FAL_KEY='bee38703-661f-4299-94a9-3346bdb64b34:52eacd079e4217a131ed69cc32d64fe7';
+async function falImg(prompt){
+  var cleaned=prompt.replace(/\[Scene\]|\[Subject\]|\[Camera\]|\[Lighting\]|\[Realism\]|\[Technical\]/g,' ').replace(/\s+/g,' ').trim().substring(0,300);
+  try{
+    var r=await fetch('https://fal.run/fal-ai/flux/schnell',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Key '+FAL_KEY},
+      body:JSON.stringify({prompt:'photorealistic commercial product photo, '+cleaned+', professional lighting, no people, no text, no watermark',image_size:'square_hd',num_inference_steps:4,num_images:1})
+    });
+    if(!r.ok){console.error('fal.ai HTTP '+r.status+':',await r.text());return null;}
+    var d=await r.json();
+    if(d.images&&d.images[0]&&d.images[0].url) return d.images[0].url;
+    console.error('fal.ai: URL 없음',JSON.stringify(d).substring(0,200));
+    return null;
+  }catch(e){console.error('fal.ai err:',e.message);return null;}
 }
 
 /* ── 3개 이미지 병렬 동시 생성 ── */
 async function genAllImages(slides){
-  var items=slides.slice(0,3).map(function(s,i){return {idx:i,url:generateImage(s.image_prompt)};});
-  /* generateImage는 즉시 URL 반환 (async 래핑 유지) */
-  var results=await Promise.all(items.map(function(item){return Promise.resolve(item);}));
+  var promises=slides.slice(0,3).map(function(s,i){return falImg(s.image_prompt).then(function(url){return {idx:i,url:url};});});
+  var results=await Promise.all(promises);
   results.forEach(function(r){
     var el=document.getElementById('si-'+r.idx);
     if(!el){console.error('genAllImages: #si-'+r.idx+' DOM 없음');return;}
-    var url=r.url;
-    var fb='https://picsum.photos/seed/'+(r.idx*777+Math.floor(Date.now()/1000))+'/512/512';
-    var src=url||fb;
-    el.innerHTML='<img src="'+src+'" style="width:100%;height:100%;object-fit:cover" onerror="this.onerror=null;this.src=\''+fb+'\'">';
+    if(r.url){
+      var img=document.createElement('img');
+      img.src=r.url;img.style.cssText='width:100%;height:100%;object-fit:cover';
+      el.innerHTML='';el.appendChild(img);
+    }else{
+      var fb='https://picsum.photos/seed/'+(r.idx*777+Math.floor(Date.now()/1000))+'/512/512';
+      el.innerHTML='<img src="'+fb+'" style="width:100%;height:100%;object-fit:cover">';
+    }
   });
 }
 
@@ -289,7 +300,7 @@ function renderBase(){
       +'<div class="slide-img" id="si-'+i+'">'
       +'<div class="slide-img-ph">'
       +'<div class="dots" style="justify-content:center;margin-bottom:8px"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>'
-      +'<div class="img-prog">Nano Banana 이미지 생성 중...</div>'
+      +'<div class="img-prog">FLUX 이미지 생성 중...</div>'
       +'</div>'
       +'</div>'
       +'<div class="slide-content"><div class="slide-headline">'+s.headline+'</div><div class="slide-body">'+s.body+'</div></div>'
